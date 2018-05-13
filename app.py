@@ -114,12 +114,16 @@ class AwsBatchGauge(object):
       total_duration = (
         now - datetime.utcfromtimestamp(job['createdAt'] / 1000.))
     elif job['status'].upper() in ['SUCCEEDED', 'FAILED']:
-      duration = (
-        datetime.utcfromtimestamp(job['stoppedAt'] / 1000.) -
-        datetime.utcfromtimestamp(job['startedAt'] / 1000.))
-      total_duration = (
-        datetime.utcfromtimestamp(job['stoppedAt'] / 1000.) -
-        datetime.utcfromtimestamp(job['createdAt'] / 1000.))
+      try:
+        duration = (
+          datetime.utcfromtimestamp(job['stoppedAt'] / 1000.) -
+          datetime.utcfromtimestamp(job['startedAt'] / 1000.))
+        total_duration = (
+          datetime.utcfromtimestamp(job['stoppedAt'] / 1000.) -
+          datetime.utcfromtimestamp(job['createdAt'] / 1000.))
+      except KeyError as e:
+        log.error(e)
+        return duration, total_duration
     return round(duration.total_seconds()), round(
       total_duration.total_seconds())
 
