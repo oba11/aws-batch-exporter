@@ -90,7 +90,7 @@ class AwsBatchGauge(object):
               'Completed the querying of the job for status:{}'.format(s))
             break
         result.append({
-          'count': len(list(filter(lambda x: x['status'] == s, result))),
+          'count': len(list(filter(lambda x: (x['status'] == s and x['queue_name'] == queue), result))),
           'queue_name': queue,
           'status': s
         })
